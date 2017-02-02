@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server-compiled.js",
-    "build:client": "babel client/index.js --out-file client-compiled.js",
-    "build:server": "babel server.js --out-file server-compiled.js"
+    "build": "babel client/index.js --out-file client-compiled.js | babel server.js --out-file server-compiled.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +14,7 @@
     "node-fetch-polyfill": "^2.0.6",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-jobs": "^0.6.2",
     "react-router": "^4.0.0-alpha.6"
   },
   "devDependencies": {

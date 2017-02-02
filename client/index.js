@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Match } from 'react-router';
 import fetchNode from 'node-fetch-polyfill';
+import { withJob } from 'react-jobs/ssr';
 
 const fetch = fetch || fetchNode;
 
@@ -11,17 +12,9 @@ class Home extends Component {
         this.user = { name: 'did not', age: 'loaded' };
     }
 
-    componentWillMount() {
-        fetch('http://localhost:3000/api/user')
-            .then(res => res.json())
-            .then(user => {
-                console.log('BLABLABLA', user, Date.now());
-                this.user = user;
-            });
-    }
-
     render() {
-        const user = this.user;
+        const { job } = this.props;
+        const user = job.completed ? job.result : this.user;
         return (
             <div>
                 <div>This is app Home</div>
@@ -32,16 +25,13 @@ class Home extends Component {
     }
 }
 
-// class Story extends Component {
-//     render() {
-//         return (
-//             <div>This is Story view</div>
-//         );
-//     }
-// }
+const HomeAsync = withJob(
+    () => fetch('http://localhost:3000/api/user')
+        .then(res => res.json())
+)(Home);
 
 export default (
     <div>
-        <Match pattern="/" component={Home} />
+        <Match pattern="/" component={HomeAsync} />
     </div>
 );

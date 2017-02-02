@@ -3,6 +3,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { ServerRouter, createServerRenderContext } from 'react-router';
 import clientApp from './client-compiled';
+import { runJobs } from 'react-jobs/ssr';
 
 // client part
 const context = createServerRenderContext()
@@ -11,21 +12,20 @@ const context = createServerRenderContext()
 const app = express();
 
 app.get('/', function (req, res) {
-    const markup = renderToString(
+    runJobs(
         <ServerRouter
             location={req.url}
             context={context}
         >
             {clientApp}
         </ServerRouter>
-    );
+    )
+        .then((runResult) => {
+            const { appWithJobs } = runResult;
+            const appString = renderToString(appWithJobs);
 
-    console.log(markup, Date.now());
-
-    const result = context.getResult();
-    console.log(result);
-
-    res.send(markup);
+            res.send(appString);
+        });
 });
 
 app.get('/api/user', function (req, res) {
